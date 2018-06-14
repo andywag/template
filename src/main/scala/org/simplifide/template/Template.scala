@@ -16,6 +16,8 @@ object Template   {
   implicit def ListToTemplate(value:Seq[Template]) = new ListTemplate(value)
 
 
+  val NL = StringValue("\n")
+
   def sep(input:Template,seperator:Template) = new Repeater(input,seperator)
   def commaSep(input:Template) = sep(input,",")
 
@@ -28,9 +30,13 @@ object Template   {
   def paren(input:Template) = surround(input,"(",")")
   def brack(input:Template) = surround(input,"[","]")
   def quotes(input:Template) = surround(input,"\"","\"")
+  def surroundGt(input:Template) = surround(input,"<",">")
+
   def parenComma(input:Template) = paren(commaSep(input))
   def qu(condition:Boolean, tr:Template, fa:Template) = new Question(condition,tr, fa)
 
+  def curlyIndent(x:Template*) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
+  def curlyIndent(x:List[Template]) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
 
   //def opt(option:Option[Template])                 = new Template.Opt(option)
   //def opt(template:Template, condition:Boolean)    = new Template.Opt(if (condition) Some(template) else None)
