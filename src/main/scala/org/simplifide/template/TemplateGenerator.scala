@@ -10,9 +10,8 @@ object TemplateGenerator {
       case Template.StringValue(x)  =>  x
       case Template.And(l,r)        => s"${create(l)}${create(r)}"
       case Template.Indent(x)       => s"   ${create(x)}"
-      case Template.ListTemplate(x) => {
-        x.map(create(_)).mkString("")
-      }
+      case Template.ListTemplate(x) => x.map(create(_)).mkString("")
+      case Template.Opt(x)          => x.map(create(_)).getOrElse("")
     }
   }
 

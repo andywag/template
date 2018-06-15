@@ -7,39 +7,56 @@ import org.simplifide.template.FileModel.{GDir, GFile}
 import org.simplifide.template.cpp.{CppGenerator, CppModel}
 import org.simplifide.template.dart.DartModel.DartImport
 import org.simplifide.template.dart.{DartGenerator, DartModel}
-import CppModel._
-import Template._
+import org.simplifide.template.model.{MFunc, Model}
+import org.simplifide.template.model.Model.Import
+import Model._
+import org.simplifide.template.cpp.CppModel.{$pragma, $using, Pragma}
+
+object TestClass extends Container[Model] {
+
+  $pragma ~ "once" -->;
+  $import ~ "test2.temp" -->;
+  NL -->;
+  NL -->;
+  $using ~ "namespace std" -->;
+
+  object Func extends MFunc("base",SType("int")) {
+    val args = List(Var("int",T("t")))
+  }
+
+  val foo  = --> (T("int") ~ "foo" ~= 10)
+  val base = --> ($auto ~ "foo2")
+
+  object Internal extends MClass("Basic") {
+    val alpha = -->(T("int") ~ "alpha")
+  }
+
+  Internal -->
+
+
+}
 
 class CppTest extends FlatSpec {
 
-  object CppBase extends Container[CppModel] {
-    ->(Pragma("once"))
-    ->(ImportG("blitz_array.h"))
-    ->(ImportG("vector"))
-    ->(ImportG("iostream"))
-    ->(ImportG("string"))
-    ->(USING ~ NAMESPACE ~ "helium_phy")
-    ->(Template.NL)
-    ->(Template.NL)
-
-    val a = Cla("RxConstructStruct")(
-      CppModel.VarDec("std::string","here"),
-      CppModel.VarDec("int","test"),
-      CppModel.VarDec("int","test")
-    )
-
-
-
-    override def template(x: CppModel): Template = CppGenerator.create(x)
-  }
-
   val project = GDir("base")(
     GDir("src")(
-      GFile("temp.cpp",CppBase)
+      GFile("temp.cpp",TestClass.contents(CppModel.cWriter))
     ),
     GDir("test")
   )
-
   FileModel.create(project,new File("C:\\scala_projects\\template\\cpp_results"))
+
+  val project2 = GDir("base")(
+    GDir("src")(
+      GFile("temp.dart",TestClass.contents(DartModel.dartWriter))
+    ),
+    GDir("test")
+  )
+  FileModel.create(project2,new File("C:\\scala_projects\\template\\dart_results"))
+
+}
+
+class DartTest extends FlatSpec {
+
 
 }

@@ -1,5 +1,6 @@
 package org.simplifide.template
 
+import org.simplifide.template
 import org.simplifide.template.Template.Repeater
 
 /**
@@ -9,13 +10,18 @@ trait Template {
 
   def ~(input:Template)                               = new Template.And(this,input)
   def ??(condition:Boolean, input:Template)           = new Template.Qu(this,condition,input)
+  def ??(x:Option[Template])                          = new template.Template.Opt(x)
 }
 
 object Template   {
   implicit def StringToTemplate(value:String) = new StringValue(value)
   implicit def ListToTemplate(value:Seq[Template]) = new ListTemplate(value)
+  implicit def OptToTemplate(value:Option[Template]) = new Opt(value)
 
+  case class Opt(val input:Option[Template]) extends Template
 
+  val SEMI = StringValue(";")
+  val SP   = StringValue(" ")
   val NL = StringValue("\n")
 
   def sep(input:Template,seperator:Template) = new Repeater(input,seperator)
@@ -29,7 +35,10 @@ object Template   {
   def curly(input:Template) = surround(input,"{","}")
   def paren(input:Template) = surround(input,"(",")")
   def brack(input:Template) = surround(input,"[","]")
+
   def quotes(input:Template) = surround(input,"\"","\"")
+  def singlequotes(input:Template) = surround(input,"'","'")
+
   def surroundGt(input:Template) = surround(input,"<",">")
 
   def parenComma(input:Template) = paren(commaSep(input))
@@ -52,6 +61,7 @@ object Template   {
   case class Qu(input1:Template, condition:Boolean, input:Template) extends Template
   case class Question(input:Boolean, in1:Template, in2:Template) extends Template
   case class Repeater(val input:Template,val seperator:Template) extends Template {
+
     /*
     def create = {
       input match {
@@ -64,9 +74,7 @@ object Template   {
   }
 
   /*
-  case class Opt(input:Option[Template]) extends Template {
-    def create = input.map(_.create).getOrElse("")
-  }
+
 
   case class Surround(input:Template,first:Template, last:Template) extends Template {
     def create = (first ~ input ~ last).create

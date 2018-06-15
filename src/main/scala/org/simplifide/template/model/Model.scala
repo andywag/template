@@ -1,0 +1,64 @@
+package org.simplifide.template.model
+
+import org.simplifide.template.Container
+import shapeless.{:+:, CNil}
+
+trait Model {
+  def -->(implicit container:Container[Model]) = {
+    val ret = container.-->(this)
+  }
+}
+
+object Model {
+
+  val NL = Str("\n")
+
+  case class Str(name:String)    extends Model
+  case class Sym(name:Symbol)    extends Model
+  case class WInt(int:Int)       extends Model
+  case class WOpt[T <: Model](x:Option[T]) extends Model
+
+  implicit def StringToModel(x:String) = Str(x)
+  implicit def SymbolToModel(x:Symbol) = Sym(x)
+  implicit def IntToModel(x:Int)       = WInt(x)
+  implicit def OptToModel[T <: Model](x:Option[T]) = WOpt(x)
+
+  def ??(x:Option[Model]) = WOpt(x)
+
+  // Statement Section
+  case class Import(name:Model, gt:Boolean = false) extends Model
+  case object $import extends Model {
+    def ~(x:Model) = Import(x)
+    def ~~(x:Model) = Import(x,true)
+  }
+  // Variable Section
+  trait MType extends Model {
+    def ~(name:Model) = VarDec(Var(name,this))
+  }
+  // Types
+  case class SType(name:Model) extends MType
+  case object $auto extends MType
+
+  def T(x:String) = SType(Str(x))
+
+  case class Var(name:Model, typ:MType) extends Model
+  case class VarDec(v:Var, value:Option[Model]=None) extends Model {
+    def ~=(x:Model) = VarDec(v,Some(x))
+  }
+
+
+  // Class Section
+  case class MClass(name:Model) extends Container[Model] with Model
+
+
+
+
+
+
+
+
+
+
+  case class Class(name:Model) extends Container[Model]
+
+}

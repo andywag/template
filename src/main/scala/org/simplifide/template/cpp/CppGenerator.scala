@@ -3,33 +3,54 @@ package org.simplifide.template.cpp
 import org.simplifide.template.Template
 import org.simplifide.template.Template._
 import org.simplifide.template.dart.DartModel.DartImport
-
 import Template._
 import CppModel._
+import org.simplifide.template.model.Model._
+
+import org.simplifide.template.dart.DartGenerator.IMPORT
+import org.simplifide.template.model.{Model, ModelGenerator}
+import org.simplifide.template.model.Model.{Import, MClass, Str, VarDec}
 
 object CppGenerator {
 
+  implicit def ModelToTemplate(x:Model) = create(x)
 
-
-  def create(o:CppModel):Template = {
+  def create(o:Model):Template = {
     o match {
-      case CppModel.Wrap(x)    => x
-      case CppModel.Pragma(x)  => PRAGMA ~ x ~ NL
-      case CppModel.ImportG(x) => IMPORT ~ quotes(x) ~ NL
-      case CppModel.ImportQ(x) => IMPORT ~ surroundGt(x) ~ NL
-      case CppModel.Using(x)   => USING ~ x ~ NL
+      //case Import(x)   => IMPORT ~ quotes(x) ~ NL
+      case Import(x,c) => IMPORT ~ (if (c) surroundGt(x) else quotes(x))  ~NL
+      case Pragma(x)   => PRAGMA ~ x ~ NL
+      case Using(x)   => USING ~ x ~ SEMI ~ NL
+
+      // Variable Section
+      case SType(x)  => x
+      case $auto  => "auto"
+
+      case VarDec(v,x)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y) ~ SEMI ~ NL
+
+      //case VarDec(v,Some(x)) => {
+      //  v.typ ~ SP ~ v.name ~ " = " ~ x ~ SEMI ~ NL
+     // }
+
+
+      // Class Section
+      case x:MClass    => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
+
+
+
+      //case Wrap(x)    => x
+      case ImportQ(x) => IMPORT ~ surroundGt(x) ~ NL
       // Template Argument
-      case CppModel.CTemplate(x) => TEMPLATE ~ surroundGt( create(x))
+      case CTemplate(x) => TEMPLATE ~ surroundGt( create(x))
       // Classes
-      case CppModel.Cla(x,y)  => CLASS ~ x ~ curlyIndent(y.map(create(_)))
-      case CppModel.ClaPrivate => PRIVATE ~ ":" ~NL
-      case CppModel.ClaPublic  => PUBLIC ~ ":" ~NL
+      case Cla(x,y)  => CLASS ~ x ~ curlyIndent(y.map(create(_)))
+      case ClaPrivate => PRIVATE ~ ":" ~NL
+      case ClaPublic  => PUBLIC ~ ":" ~NL
       // Variables
-      case CppModel.VarTypeStr(x) => x
-      case CppModel.VarDec(v) => create(v.typ) ~ " " ~ v.name ~ ";" ~ NL
-
-
+      case _ => ModelGenerator.create(o)
     }
   }
+
+
 
 }

@@ -1,20 +1,22 @@
 package org.simplifide.template
 
+import org.simplifide.template.model.Model
+
 import scala.collection.mutable.ListBuffer
 
-trait Container[T] extends FileModel.Generator{
-
-  def template(x:T):Template
+trait Container[T] {
+  implicit val container:Container[T] = this
+  val $s = this
 
   val items = new ListBuffer[T]()
 
-  def ->(x:T)     = {items.append(x); x}
-  def -->(x:T)     = { x}
+  def -->[S <: T](x:S):S     = {items.append(x); x}
 
-  def contents = {
-    val templates = items.toList.map(x => template(x))
+  def contents(implicit create:(T)=>Template) = {
+    val templates = items.toList.map(x => create(x))
     templates.map(x => TemplateGenerator.create(x)).mkString("")
   }
+
     //items.map(TemplateGenerator.create(_)).mkString("")
 
 
