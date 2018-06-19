@@ -1,6 +1,7 @@
 package org.simplifide.template.model
 
 import org.simplifide.template.Container
+import org.simplifide.template.model.MVar.SType
 import shapeless.{:+:, CNil}
 
 trait Model {
@@ -11,7 +12,8 @@ trait Model {
 
 object Model {
 
-  val NL = Str("\n")
+  def Line = Str("\n")
+  def T(s:Model) = SType(s)
 
   case class Str(name:String)    extends Model
   case class Sym(name:Symbol)    extends Model
@@ -32,19 +34,8 @@ object Model {
     def ~~(x:Model) = Import(x,true)
   }
   // Variable Section
-  trait MType extends Model {
-    def ~(name:Model) = VarDec(Var(name,this))
-  }
-  // Types
-  case class SType(name:Model) extends MType
-  case object $auto extends MType
 
-  def T(x:String) = SType(Str(x))
 
-  case class Var(name:Model, typ:MType) extends Model
-  case class VarDec(v:Var, value:Option[Model]=None) extends Model {
-    def ~=(x:Model) = VarDec(v,Some(x))
-  }
 
 
   // Class Section

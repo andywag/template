@@ -1,12 +1,14 @@
-package org.simplifide.template.dart
+package org.simplifide.template.model.dart
 
-import org.simplifide.template.dart.DartModel.DartImport
+import org.simplifide.template.model.dart.DartModel.DartImport
 import org.simplifide.template.Template._
-import org.simplifide.template.cpp.CppGenerator.create
-import org.simplifide.template.model.{Model, ModelGenerator}
-import org.simplifide.template.model.Model.{Import, SType, VarDec}
+import org.simplifide.template.model.cpp.CppGenerator.create
+import org.simplifide.template.model.{MVar, Model, ModelGenerator}
 import org.simplifide.template.{Template, TemplateGenerator}
 import Model._
+import org.simplifide.template.model.MVar.{SType, VarDec}
+import MVar.$auto
+
 
 object DartGenerator {
 

@@ -4,25 +4,28 @@ import java.io.File
 
 import org.scalatest.FlatSpec
 import org.simplifide.template.FileModel.{GDir, GFile}
-import org.simplifide.template.cpp.{CppGenerator, CppModel}
-import org.simplifide.template.dart.DartModel.DartImport
-import org.simplifide.template.dart.{DartGenerator, DartModel}
-import org.simplifide.template.model.{MFunc, Model}
+import org.simplifide.template.model.cpp.{CppGenerator, CppModel}
+import org.simplifide.template.model.dart.DartModel.DartImport
+import org.simplifide.template.model.dart.{DartGenerator, DartModel}
+import org.simplifide.template.model.Model
 import org.simplifide.template.model.Model.Import
 import Model._
-import org.simplifide.template.cpp.CppModel.{$pragma, $using, Pragma}
+import org.simplifide.template.model.MFunction.MFunc
+import org.simplifide.template.model.MVar.{$auto, SType, Var}
+import org.simplifide.template.model.cpp.CppModel.{$pragma, $using, Pragma}
 
 object TestClass extends Container[Model] {
 
   $pragma ~ "once" -->;
   $import ~ "test2.temp" -->;
-  NL -->;
-  NL -->;
+  Line -->;
   $using ~ "namespace std" -->;
+  Line -->;
 
   object Func extends MFunc("base",SType("int")) {
     val args = List(Var("int",T("t")))
   }
+  Func -->
 
   val foo  = --> (T("int") ~ "foo" ~= 10)
   val base = --> ($auto ~ "foo2")

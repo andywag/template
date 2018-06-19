@@ -24,10 +24,13 @@ object Template   {
   val SP   = StringValue(" ")
   val NL = StringValue("\n")
 
-  def sep(input:Template,seperator:Template) = new Repeater(input,seperator)
-  def commaSep(input:Template) = sep(input,",")
+  def sep(input:List[Template],seperator:Template) = new Repeater(input,seperator)
+  def commaSep(input:List[Template]) = sep(input,",")
+  def parenComma(input:List[Template]) = {
+    paren(commaSep(input))
+  }
 
-  def rep(input:Template)                   = new Template.Repeater(input,"")
+  def rep(input:List[Template])                   = new Template.Repeater(input,"")
   def indent(input:Template) = new Indent(input)
 
   def surround(input:Template, front:Template) = front ~ input ~ front
@@ -41,7 +44,6 @@ object Template   {
 
   def surroundGt(input:Template) = surround(input,"<",">")
 
-  def parenComma(input:Template) = paren(commaSep(input))
   def qu(condition:Boolean, tr:Template, fa:Template) = new Question(condition,tr, fa)
 
   def curlyIndent(x:Template*) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
@@ -60,7 +62,7 @@ object Template   {
   case class Indent(val input:Template) extends Template
   case class Qu(input1:Template, condition:Boolean, input:Template) extends Template
   case class Question(input:Boolean, in1:Template, in2:Template) extends Template
-  case class Repeater(val input:Template,val seperator:Template) extends Template {
+  case class Repeater(val input:List[Template],val seperator:Template) extends Template {
 
     /*
     def create = {

@@ -1,8 +1,8 @@
-package org.simplifide.template.cpp
+package org.simplifide.template.model.cpp
 
 import org.simplifide.template
 import org.simplifide.template.{Container, Template, TemplateGenerator}
-import org.simplifide.template.dart.DartModel
+import org.simplifide.template.model.dart.DartModel
 import org.simplifide.template.model.Model
 
 
