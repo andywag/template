@@ -19,6 +19,9 @@ object Model {
   case class Sym(name:Symbol)    extends Model
   case class WInt(int:Int)       extends Model
   case class WOpt[T <: Model](x:Option[T]) extends Model
+  case class Quotes(name:Model)  extends Model
+
+  case class Comment(x:Model) extends Model
 
   implicit def StringToModel(x:String) = Str(x)
   implicit def SymbolToModel(x:Symbol) = Sym(x)

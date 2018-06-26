@@ -17,7 +17,5 @@ trait Container[T] {
     templates.map(x => TemplateGenerator.create(x)).mkString("")
   }
 
-    //items.map(TemplateGenerator.create(_)).mkString("")
-
 
 }

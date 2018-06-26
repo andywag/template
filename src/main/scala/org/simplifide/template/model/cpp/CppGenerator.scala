@@ -31,7 +31,7 @@ object CppGenerator {
 
       // Function Declaration
       case x:MFunction => {
-        x.output ~ SP ~ x.name ~ parenComma(x.args.map(y => create(y))) ~ NL
+        x.output ~ SP ~ x.name ~ parenComma(x.args.map(y => create(y))) ~ curlyIndent(x.body.map(y=>create(y))) ~ NL
       } // curlyIndent(x.body.map(_.create))
       //case VarDec(v,Some(x)) => {
       //  v.typ ~ SP ~ v.name ~ " = " ~ x ~ SEMI ~ NL

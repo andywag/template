@@ -24,6 +24,7 @@ object TestClass extends Container[Model] {
 
   object Func extends MFunc("base",SType("int")) {
     val args = List(Var("int",T("t")))
+
   }
   Func -->
 
