@@ -20,6 +20,7 @@ object Template   {
 
   case class Opt(val input:Option[Template]) extends Template
 
+  val COLON = StringValue(":")
   val SEMI = StringValue(";")
   val SP   = StringValue(" ")
   val NL = StringValue("\n")
@@ -48,6 +49,10 @@ object Template   {
 
   def curlyIndent(x:Template*) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
   def curlyIndent(x:List[Template]) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
+
+
+  def parenIndent(x:List[Template]) = "(" ~  x.map(y => indent(y)) ~ ")"
+
 
   //def opt(option:Option[Template])                 = new Template.Opt(option)
   //def opt(template:Template, condition:Boolean)    = new Template.Opt(if (condition) Some(template) else None)

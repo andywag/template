@@ -22,5 +22,7 @@ object DartModel {
   case class DartImport (name:String) extends DartModel
   case class DartConst  (name:String) extends DartModel
 
+  case class Package(packName:String, name:String) extends Model
+
 
 }

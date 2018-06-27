@@ -31,10 +31,12 @@ object Model {
   def ??(x:Option[Model]) = WOpt(x)
 
   // Statement Section
-  case class Import(name:Model, gt:Boolean = false) extends Model
+  case class Import(name:Model, alias:Option[Model] = None, gt:Boolean = false) extends Model
+
+
   case object $import extends Model {
     def ~(x:Model) = Import(x)
-    def ~~(x:Model) = Import(x,true)
+    def ~~(x:Model) = Import(x,None, true)
   }
   // Variable Section
 

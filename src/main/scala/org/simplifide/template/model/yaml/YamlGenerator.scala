@@ -21,7 +21,9 @@ object YamlGenerator {
       case Model.Quotes(x)        => "'" ~ x ~ "'"
 
       case YamlModel.KeyPair(x,y) => x ~ " : " ~y ~ NL
-      case YamlModel.KeyList(x,y) => x ~ " : " ~ NL ~ indent(y.map(create(_)))
+      case YamlModel.KeyList(x,y) => {
+        x ~ " : " ~ NL ~ y.map(z => indent(create(z)))
+      }
 
       case Model.Comment(x)          => "#" ~ x ~ NL
     }

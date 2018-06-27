@@ -1,8 +1,10 @@
 package org.simplifide.template
 
 import java.io.File
+import java.nio.file.{Files, Path}
 
 import org.simplifide.template.model.Model
+import org.simplifide.utils.Utils
 
 sealed trait FileModel {}
 
@@ -11,6 +13,7 @@ object FileModel {
 
 
 
+  case class GCopy(location:String, source:String) extends FileModel
   case class GFile(location:String,contents:String) extends FileModel
   case class GDir(location:String,children:List[FileModel] = List()) extends FileModel
   object GDir {
@@ -26,6 +29,12 @@ object FileModel {
       }
       case GFile(x,y) => {
         Utils.createFile(new File(base,x),y)
+      }
+      case GCopy(x,y) => {
+        val dstPath = new File(base,x).toPath
+        val srcPath = new File(y).toPath
+        System.out.println(s"Moving $srcPath to $dstPath")
+        Files.copy(srcPath,dstPath)
       }
     }
   }
