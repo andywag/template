@@ -10,7 +10,7 @@ trait MAttribute extends Model {
 
 object MAttribute {
 
-  case class MAttr(name:Model) extends Container[Model] with MAttribute {
+  class MAttr(val name:Model) extends Container[Model] with MAttribute {
     def body = items.toList
   }
 

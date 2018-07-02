@@ -6,7 +6,6 @@ import scala.collection.mutable.ListBuffer
 
 trait Container[T] {
   implicit val container:Container[T] = this
-  val $s = this
 
   val items = new ListBuffer[T]()
 

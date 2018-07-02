@@ -12,6 +12,7 @@ object ProcessUtil {
 
   def runCommand(cmd:String, location:Option[String]) = {
     println(s"Running $cmd")
+    println(s"In $location")
     val proc = location.map(x => Process(cmd,new File(x))).getOrElse(Process(cmd))
     val run = proc.run(logger)
     println(s"Returned Exit Code ${run.exitValue()}")

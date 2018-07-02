@@ -51,7 +51,7 @@ object Template   {
   def curlyIndent(x:List[Template]) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
 
 
-  def parenIndent(x:List[Template]) = "(" ~  x.map(y => indent(y)) ~ ")"
+  def parenIndentNL(x:List[Template]) = "(" ~ NL ~  x.map(y => indent(y)) ~ ")"
 
 
   //def opt(option:Option[Template])                 = new Template.Opt(option)

@@ -3,9 +3,10 @@ package org.simplifide.template.model.dart
 import org.simplifide.template.{Container, FileModel}
 import org.simplifide.template.FileModel.{GCopy, GDir, GFile}
 import org.simplifide.template.model.MAttribute.MAttr
+import org.simplifide.template.model.MFunction.MFunc
 import org.simplifide.template.model.Model
 import org.simplifide.template.model.Model.{$import, Comment, Quotes}
-import org.simplifide.template.model.dart.DartProject.{DartMain, Dependency, PubSpec}
+import org.simplifide.template.model.dart.DartProject.{DartMain, Dependency}
 import org.simplifide.template.model.yaml.{YamlModel, YamlParser}
 
 trait DartProject {
@@ -22,7 +23,7 @@ trait DartProject {
 
     GDir(name) (
       GDir("lib") (
-        GDir("src",sources)
+        GDir("src",sources),
       ),
       GDir("test"),
       GDir("web",List(
@@ -31,7 +32,7 @@ trait DartProject {
         GFile("main.dart",DartMain.contents(DartModel.dartWriter)),
         GCopy("styles.css","C:\\scala_projects\\first_dart\\web\\styles.css")
       )),
-      PubSpec(this).create
+      PubSpec(PubSpec.Description(this.name,""),dependencies,devDependencies).create
     )
   }
 
@@ -41,31 +42,6 @@ object DartProject {
 
   case class Dependency(name: String, version: String)
 
-  case class PubSpec(project: DartProject) extends Container[Model] with YamlParser {
-
-    'name ->> project.name
-    'description ->> project.description
-    -->(Comment("Version: 1.0"))
-    -->(Comment("Homepage: "))
-    -->(Comment("Author : Andy Wagner"))
-    -->(Model.Line)
-    'environment ->> List(
-      'sdk >>> Quotes(">=2.0.0-dev.55.0 <2.0.0"))
-    -->(Model.Line)
-    if (project.dependencies.length > 0) {
-      val deps = project.dependencies.map(x => x.name >>> x.version)
-      'dependencies ->> deps
-    }
-    -->(Model.Line)
-    if (project.devDependencies.length > 0) {
-      'dev_dependencies ->> project.devDependencies.map(x => x.name >>> x.version)
-    }
-
-    def create = {
-      val contents = this.contents(YamlModel.cWriter)
-      new GFile("pubspec.yaml", contents)
-    }
-  }
 
   /*
   import 'package:angular/angular.dart';
@@ -75,14 +51,26 @@ object DartProject {
     runApp(ng.AppComponentNgFactory);
   }
    */
+  import org.simplifide.template.model.MVar._
+  import org.simplifide.template.model.Model._
+
   object DartMain extends Container[Model] with DartParser {
     IMPORT_ANGULAR
     IMPORT_ANGULAR_ROUTER
     IMPORT_SELF
-
+    -->(Line)
     --@("GeneratorInjector")(
       "routerProvidersHash"
     )
+    -->(Line)
+    val inj = dec($final ~ T("InjectorFactory") ~ "injector" ~= "self.injector$Injector")
+    -->(Line)
+    object Func extends MFunc("main",SType("void")) with DartParser {
+      val args = List()
+
+      call("runApp",List("ng.AppComponentNgFactory","createInjector"~>inj))
+    }
+    -->(Func)
 
   }
 

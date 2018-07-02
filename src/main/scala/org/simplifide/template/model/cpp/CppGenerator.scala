@@ -20,7 +20,7 @@ object CppGenerator {
   def create(o:Model):Template = {
     o match {
       //case Import(x)   => IMPORT ~ quotes(x) ~ NL
-      case Import(x,c) => IMPORT ~ (if (c) surroundGt(x) else quotes(x))  ~NL
+      case Import(x,_,c) => IMPORT ~ (if (c) surroundGt(x) else quotes(x))  ~NL
       case Pragma(x)   => PRAGMA ~ x ~ NL
       case Using(x)   => USING ~ x ~ SEMI ~ NL
 

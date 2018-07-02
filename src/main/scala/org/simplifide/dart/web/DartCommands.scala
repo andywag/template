@@ -1,4 +1,4 @@
-package org.simplifide.template.model.dart
+package org.simplifide.dart.web
 
 import org.simplifide.template.Constants
 import org.simplifide.utils.ProcessUtil
@@ -6,7 +6,9 @@ import org.simplifide.utils.ProcessUtil
 object DartCommands {
 
 
-  def build() = {
+  def build(location:String) = {
+    val cmd = s"${Constants.dartLocation}\\pub.bat global run webdev build"
+    ProcessUtil.runCommand(cmd,Some(location))
   }
 
   def setup(location:String) = {

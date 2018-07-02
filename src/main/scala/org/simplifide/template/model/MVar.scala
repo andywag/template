@@ -13,10 +13,20 @@ object MVar {
   trait MType extends Model {
     def ~(name:Model) = VarDec(Var(name,this))
   }
-  case class SType(name:Model) extends MType
-  case object $auto extends MType
 
+
+  case class SType(name:Model) extends MType
+  case class TypeAnd(r:MType,l:MType) extends MType
+
+  trait TypeId extends MType {
+    def ~(x:MType) = TypeAnd(this,x)
+  }
+  case object $auto extends TypeId
+  case object $final extends TypeId
+
+  /** Simple Type */
   def T(x:String) = SType(Str(x))
+
 
   case class Var(name:Model, typ:MType) extends Model
   case class VarDec(v:Var, value:Option[Model]=None) extends Model {

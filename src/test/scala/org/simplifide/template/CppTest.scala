@@ -9,7 +9,10 @@ import org.simplifide.template.model.dart.DartModel.DartImport
 import org.simplifide.template.model.dart.{DartGenerator, DartModel}
 import org.simplifide.template.model.Model
 import org.simplifide.template.model.Model.Import
+
 import Model._
+import org.simplifide.template.model.MVar._
+
 import org.simplifide.template.model.MFunction.MFunc
 import org.simplifide.template.model.MVar.{$auto, SType, Var}
 import org.simplifide.template.model.cpp.CppModel.{$pragma, $using, Pragma}

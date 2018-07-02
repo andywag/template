@@ -16,6 +16,8 @@ object FileModel {
   case class GCopy(location:String, source:String) extends FileModel
   case class GFile(location:String,contents:String) extends FileModel
   case class GDir(location:String,children:List[FileModel] = List()) extends FileModel
+  case class GList(children:List[FileModel]) extends FileModel
+
   object GDir {
     def apply(location:String)(children:FileModel*) = new GDir(location,children.toList)
   }
@@ -27,6 +29,9 @@ object FileModel {
         next.mkdirs()
         y.foreach(z => create(z,next))
       }
+      case GList(x) => {
+        x.foreach(z => create(z,base))
+      }
       case GFile(x,y) => {
         Utils.createFile(new File(base,x),y)
       }
@@ -34,6 +39,7 @@ object FileModel {
         val dstPath = new File(base,x).toPath
         val srcPath = new File(y).toPath
         System.out.println(s"Moving $srcPath to $dstPath")
+        if (Files.exists(dstPath)) Files.delete(dstPath)
         Files.copy(srcPath,dstPath)
       }
     }
