@@ -1,41 +1,49 @@
 package org.simplifide.dart.binding
 
-import org.simplifide.template.model.{MFunction, MProto}
+import org.simplifide.template.model.MFunction
 import shapeless.{HList, LabelledGeneric}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.record.Keys
+import io.circe.{JsonObject, _}
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+
 
 object TestBinding {
 
-  case class Person(x:String)
-  case class Result(x:String, y:Person)
-  case class Event(name:String, event:String, results:List[Result])
+  sealed trait Bindings
+
+  case class Person(x:String, d:Option[String], id:String = "Person")
+  case class Result(x:String, y:Person, id:String = "Result") extends Bindings
+  case class Event(name:String, event:String, results:List[Result], id:String="Event") extends Bindings
 
 
-  def createProto[T, HL<:HList, KL<:HList](input:T)(implicit gen: LabelledGeneric.Aux[T, HL],
-                                                   keys: Keys.Aux[HL, KL],
-                                                   t1: ToTraversable.Aux[HL, List, Any],
-                                                   t2: ToTraversable.Aux[KL, List, Symbol]):MProto ={
-    input match {
-      case x:String => MProto.PString
-      case x:Int    => MProto.PInt
-      case _        => {
-        val t = MFunction.walk(input)
-        //val proto = t._3.map(createProto(_))
-        val args = (t._2 zip t._3).map(x => MProto.ProtoArg(x._1.name, x._2))
-        MProto.ProtoClass(t._1, args)
-      }
-    }
+  Event("String","String",List())
+
+
+  import Json._
+
+  def walkField(json:Json,field:String)  {
+    println(s"Field : $field")
+    walk(json.hcursor.downField(field).focus.get)
+  }
+
+  def walk(doc: Json) {
+    val keys = doc.hcursor.keys.getOrElse(List())
+    keys.foreach(walkField(doc,_))
+
   }
 
 
   def main(args: Array[String]): Unit = {
-    //val t = MFunction.walk(Event("b","c",List(Result("d",Person("e")))))
-    //val t = MFunction.walk(Result("c","d"))
-    //val res = t._2.zip(t._3)
-    val result = createProto(Event("b","c",List(Result("d",Person("e")))))
-    //val result = LabelledGeneric[Event].to(Event("b","c",List(Result("d",Person("e")))))
+    val result = Event("b","c",List(Result("d",Person("e",Some("a")))))
+    val json = result.asJson
 
-    println(result)
+    walk(json)
+    println(json.noSpaces)
+
+    val decodedFoo = decode[Event](json.noSpaces)
+    println(decodedFoo)
   }
 }
