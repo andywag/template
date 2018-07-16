@@ -4,6 +4,9 @@ import java.io.File
 import java.nio.file.Files
 
 import org.scalatest.FlatSpec
+import org.simplifide.dart.binding.Binding
+import org.simplifide.dart.binding.Binding._
+import org.simplifide.dart.web.DataModel.DataModelImpl
 import org.simplifide.dart.web.Routes.RoutePath
 import org.simplifide.dart.web.{DartCommands, DartComponent, DartWebProject, DartWebStyles}
 import org.simplifide.template.model.Model
@@ -42,8 +45,24 @@ object DartProjectExample extends DartWebProject {
     RoutePath("test3",TestComponent3),
   )
 
+  val models = ProjectModel.models
+
 }
 
+object ProjectModel {
+  import io.circe.generic.auto._
+
+  case class Person(x: String, d: Option[String], id: String = "Person")
+  case class Result(x: String, y: Person, id: String = "Result")
+  case class Event(name: String, event: String, results: List[Result], id: String = "Event")
+
+  val person = Person(B_STRING,Some(B_STRING))
+  val result = Result(B_STRING,person)
+  val event = Event(B_STRING,B_STRING,List(result))
+
+  val models = Binding.createClasses(event).map(x => DataModelImpl(x))
+
+}
 object TestComponent1 extends DartComponent {
   val name     = "test_a"
   override val style = Some(CssFile(DartWebStyles.MyInline))

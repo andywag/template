@@ -16,6 +16,7 @@ trait DartWebProject  {
   val dependencies:List[Dependency]
   val devDependencies:List[Dependency]
   val routes:List[RoutePath]
+  val models:List[DataModel]
 
   private lazy val componentSources = components.flatMap(x => x.createFiles)
 
@@ -29,7 +30,12 @@ trait DartWebProject  {
 
     GDir(name) (
       GDir("lib") (
-        GDir("src",routeFile.createFile :: routePathsFile.createFile :: componentSources ::: sources ),
+        GDir("src",
+          GDir("models",models.map(x => x.createFile)) ::
+          routeFile.createFile ::
+          routePathsFile.createFile ::
+          componentSources :::
+          sources ),
         GList(DartAppNew(routes).createFiles)
       ),
       GDir("test"),

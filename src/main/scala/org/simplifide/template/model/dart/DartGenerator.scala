@@ -48,6 +48,9 @@ object DartGenerator {
       case SType(x)  => x
       case $auto   => "var"
       case $final  => "final"
+      case Generic(outer,inner) => {
+        create(outer) ~ "<" ~ create(inner) ~ ">"
+      }
 
       // Variable Section
       case VarDec(v,x)    => {
@@ -68,7 +71,8 @@ object DartGenerator {
         x.render
       }
 
-      case x:MClass    => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
+      case x:MClass         => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
+      case x:MClassProto    => CLASS ~ x.name ~ curlyIndent(x.declarations.toList.map(create(_)))
 
 
       // Component Generation
