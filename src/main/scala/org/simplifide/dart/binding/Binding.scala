@@ -35,7 +35,7 @@ object Binding {
       val array = typeJson.asArray
       array.map(x => {
         val id = getId(x(0))
-        MVar.Generic(MVar.SType("List"),MVar.SType(rq(id.get.toString())))
+        MVar.Generic(MVar.SType("List"),List(MVar.SType(rq(id.get.toString()))))
       }).getOrElse(
         MVar.SType(rq(idOrBasic(typeJson)))
       )

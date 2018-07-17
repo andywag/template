@@ -10,13 +10,17 @@ trait DataModel {
 
   def create = {
     new Container[Model] with DartParser {
+      cla.imports.foreach(x => -->(x))
+
       -->(cla)
+
     }
   }
 
   def createFile = {
     val gen = create
-    new GFile(cla.name.toString.toLowerCase + ".dart",gen.contents(DartGenerator.create))
+    val className = cla.name.toLowerCase()
+    new GFile(className + ".dart",gen.contents(DartGenerator.create))
   }
 
 }

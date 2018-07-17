@@ -23,6 +23,7 @@ object MFunction {
   case class Lambda(name:String, typ:MType, input:Model, func:Model) extends Model
 
 
+
   trait SFunction extends Model
 
   def generic[T, HL<:HList, KL<:HList](path:T)(implicit gen: LabelledGeneric.Aux[T, HL],

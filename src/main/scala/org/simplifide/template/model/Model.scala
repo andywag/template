@@ -27,6 +27,9 @@ object Model {
   case class FixList(items:List[Model]) extends Model
   case class FixListLine(items:List[Model]) extends Model
 
+  case class DotPrefix(r:Model,l:Model) extends Model
+  case class SemiEnd(r:Model) extends Model
+
   case class Comment(x:Model) extends Model
   case class ModelTuple(x:(Model,Model)) extends Model
 

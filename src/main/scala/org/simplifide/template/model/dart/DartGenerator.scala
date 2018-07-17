@@ -28,7 +28,8 @@ object DartGenerator {
       case Model.Quotes3(x) => "'''" ~ x ~ "'''"
       case Model.FixList(x) => "[" ~ commaSep(x.map(y => create(y))) ~ "]"
       case Model.FixListLine(x) => "[" ~ commaSep(x.map(y => create(y))) ~ "]"
-
+      case DotPrefix(l,r) => create(l) ~ "." ~ create(r)
+      case SemiEnd(l) => create(l) ~ ";" ~ NL
       // Core
       case x:DartConstants.Directive => x.name
 
@@ -45,11 +46,12 @@ object DartGenerator {
       case TypeAnd(x,y) => {
         x ~ SP ~ y
       }
+      case NoType    => ""
       case SType(x)  => x
       case $auto   => "var"
       case $final  => "final"
       case Generic(outer,inner) => {
-        create(outer) ~ "<" ~ create(inner) ~ ">"
+        create(outer) ~ "<" ~ commaSep(inner.map(create(_))) ~ ">"
       }
 
       // Variable Section
@@ -72,7 +74,7 @@ object DartGenerator {
       }
 
       case x:MClass         => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
-      case x:MClassProto    => CLASS ~ x.name ~ curlyIndent(x.declarations.toList.map(create(_)))
+      case x:MClassProto    => create(x.create)
 
 
       // Component Generation
