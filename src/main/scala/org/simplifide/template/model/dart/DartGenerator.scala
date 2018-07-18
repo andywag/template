@@ -7,6 +7,7 @@ import org.simplifide.template.model._
 import org.simplifide.template.{Template, TemplateGenerator}
 import Model._
 import MVar._
+import org.simplifide.dart.binding.MClassProto
 import org.simplifide.template.model.MFunction.{Call, Lambda, SFunction}
 import org.simplifide.template.model.ModelGenerator.create
 import org.simplifide.template.model.cpp.CppModel.CLASS
@@ -62,7 +63,7 @@ object DartGenerator {
       case MapIndex(o,i) => create(o) ~ "[" ~ singlequotes(i) ~ "]"
       // Function Section
       case x:MFunction => {
-        x.output ~ SP ~ x.name ~ parenComma(x.argList.map(y => create(y))) ~ curlyIndent(x.body.map(y=>create(y))) ~ NL
+        x.output ~ SP ~ x.name ~ parenComma(x.argList.map(y => create(y))) ~SP~ curlyIndent(x.body.map(y=>create(y)))
       }
       case x:Lambda => { //   RoutePath get heroes => paths.heroes;
         x.typ ~ SP ~ x.name ~ SP ~ x.input ~ " => " ~ x.func ~ SEMI ~ NL
@@ -76,10 +77,10 @@ object DartGenerator {
 
       case x:MClass         => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
       case x:MClassProto    => create(x.create)
-      /*case Dictionary(x)    => {
-        val tuples = x.map(y => ModelTuple(quotes(y.x._1),y.x._2))
-        "{" ~ x.map(y => ModelTuple(y.x._1,y.x._2)) ~ "}"
-      }*/
+      case Dictionary(x)    => {
+        val tuples = x.map(y => (singlequotes(y.x._1),y.x._2))
+        "{" ~ commaSep(tuples.map(x => x._1 ~ " : " ~ x._2)) ~ "}"
+      }
       case Return(x)        => "return " ~ create(x) ~ SEMI ~ NL
 
       // Component Generation

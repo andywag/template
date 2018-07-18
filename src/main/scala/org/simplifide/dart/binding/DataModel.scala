@@ -1,8 +1,8 @@
-package org.simplifide.dart.web
+package org.simplifide.dart.binding
 
 import org.simplifide.template.Container
 import org.simplifide.template.FileModel.GFile
-import org.simplifide.template.model.{MClassProto, Model}
+import org.simplifide.template.model.Model
 import org.simplifide.template.model.dart.{DartGenerator, DartParser}
 
 trait DataModel {
@@ -11,7 +11,7 @@ trait DataModel {
   def create = {
     new Container[Model] with DartParser {
       cla.imports.foreach(x => -->(x))
-
+      -->(org.simplifide.template.model.Model.Line)
       -->(cla)
 
     }

@@ -19,11 +19,12 @@ object Template   {
   implicit def OptToTemplate(value:Option[Template]) = new Opt(value)
 
   case class Opt(val input:Option[Template]) extends Template
+  case object NewLine extends Template
 
   val COLON = StringValue(":")
   val SEMI = StringValue(";")
   val SP   = StringValue(" ")
-  val NL = StringValue("\n")
+  val NL = NewLine
 
   def sep(input:List[Template],seperator:Template) = new Repeater(input,seperator)
   def commaSep(input:List[Template]) = sep(input,",")
@@ -54,10 +55,6 @@ object Template   {
   def parenIndentNL(x:List[Template]) = "(" ~ NL ~  x.map(y => indent(y)) ~ ")"
 
 
-  //def opt(option:Option[Template])                 = new Template.Opt(option)
-  //def opt(template:Template, condition:Boolean)    = new Template.Opt(if (condition) Some(template) else None)
-
-
   def L(templates:List[Template]) = new ListTemplate(templates)
 
   case object Empty extends Template
@@ -69,23 +66,10 @@ object Template   {
   case class Question(input:Boolean, in1:Template, in2:Template) extends Template
   case class Repeater(val input:List[Template],val seperator:Template) extends Template {
 
-    /*
-    def create = {
-      input match {
-        case ListTemplate(List())   => ""
-        case ListTemplate(input)    => input.reduceLeft(_~seperator~_).create
-        case _                      => input.create
-      }
-    }
-    */
+
+
   }
 
-  /*
 
-
-  case class Surround(input:Template,first:Template, last:Template) extends Template {
-    def create = (first ~ input ~ last).create
-  }
-  */
 
 }

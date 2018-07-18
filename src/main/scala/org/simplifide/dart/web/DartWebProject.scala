@@ -1,5 +1,6 @@
 package org.simplifide.dart.web
 
+import org.simplifide.dart.binding.DataModel
 import org.simplifide.dart.web.Routes.RoutePath
 import org.simplifide.template.FileModel
 import org.simplifide.template.FileModel.{GCopy, GDir, GFile, GList}

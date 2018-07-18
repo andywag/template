@@ -1,6 +1,6 @@
 package org.simplifide.dart.binding
 
-import org.simplifide.template.model.{MClassProto, MFunction, MVar}
+import org.simplifide.template.model.{MFunction, MVar}
 import shapeless.{HList, LabelledGeneric}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.record.Keys

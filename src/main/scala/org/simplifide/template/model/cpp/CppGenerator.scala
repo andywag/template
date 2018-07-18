@@ -27,7 +27,7 @@ object CppGenerator {
       // Variable Declaration Section
       case SType(x)  => x
       case $auto  => "auto"
-      case VarDec(v,x)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y) ~ SEMI ~ NL
+      case VarDec(v,x,_)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y) ~ SEMI ~ NL
 
       // Function Declaration
       case x:MFunction => {

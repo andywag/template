@@ -6,7 +6,7 @@ import java.nio.file.Files
 import org.scalatest.FlatSpec
 import org.simplifide.dart.binding.Binding
 import org.simplifide.dart.binding.Binding._
-import org.simplifide.dart.web.DataModel.DataModelImpl
+import org.simplifide.dart.binding.DataModel.DataModelImpl
 import org.simplifide.dart.web.Routes.RoutePath
 import org.simplifide.dart.web.{DartCommands, DartComponent, DartWebProject, DartWebStyles}
 import org.simplifide.template.model.Model

@@ -1,9 +1,10 @@
-package org.simplifide.template.model
+package org.simplifide.dart.binding
 
 import org.simplifide.template
 import org.simplifide.template.model
 import org.simplifide.template.model.MVar.{SType, VarDec}
-import org.simplifide.template.model.Model.{ DotPrefix, MClass, MapIndex, SemiEnd}
+import org.simplifide.template.model.Model.{DotPrefix, Line, MClass, MapIndex, SemiEnd}
+import org.simplifide.template.model.{MFunction, MVar, Model}
 
 trait MClassProto extends Model {
   val name:String
@@ -29,7 +30,7 @@ trait MClassProto extends Model {
     new model.MFunction.Call(this.name,this.vars.map(x => x.copy(name = DotPrefix("this",x.name))))
   }
 
-  def create = new template.model.MClassProto.Cla(this)
+  def create = new MClassProto.Cla(this)
 
 }
 
@@ -41,9 +42,13 @@ object MClassProto {
 
   class Cla(cla:MClassProto) extends MClass(cla.name) {
     cla.declarations.foreach(x => -->(x))
+    -->(Line)
     -->(new SemiEnd(cla.constructor))
-    val json = new JsonConverter(cla)
+    -->(Line)
     this.items.append(new From(cla))
+    -->(Line)
+    this.items.append(new To(cla))
+
   }
 
   /*
@@ -59,7 +64,7 @@ object MClassProto {
     -->(Model.Return(MFunction.Call(s"${cla.name}",cargs)))
   }
 
-  class To(cla:MClassProto) extends MFunction.MFunc(s"${cla.name}.toJson",SType("Map")) {
+  class To(cla:MClassProto) extends MFunction.MFunc(s"toJson",SType("Map")) {
     val args = List()
 
     val cargs = cla.vars.map(x => Model.ModelTuple(x.name,x.name))
@@ -67,13 +72,6 @@ object MClassProto {
     -->(Model.Return(dict))
   }
 
-  class JsonConverter(cla:MClassProto) {
 
-
-
-    def to = {
-
-    }
-  }
 
 }
