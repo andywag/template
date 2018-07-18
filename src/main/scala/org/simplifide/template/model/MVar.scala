@@ -51,7 +51,7 @@ object MVar {
 
 
   case class Var(name:Model, typ:MType) extends MVar with Model
-  case class VarDec(v:Var, value:Option[Model]=None) extends Model {
+  case class VarDec(v:Var, value:Option[Model]=None, eol:Boolean = true) extends Model {
     def ~=(x:Model) = VarDec(v,Some(x))
   }
 }

@@ -27,11 +27,16 @@ object Model {
   case class FixList(items:List[Model]) extends Model
   case class FixListLine(items:List[Model]) extends Model
 
+  case class MapIndex(o:Model, i:Model) extends Model
+  case class Dictionary(i:List[ModelTuple]) extends Model
+
   case class DotPrefix(r:Model,l:Model) extends Model
   case class SemiEnd(r:Model) extends Model
 
   case class Comment(x:Model) extends Model
   case class ModelTuple(x:(Model,Model)) extends Model
+
+  case class Return(x:Model) extends Model
 
   implicit def StringToModel(x:String) = Str(x)
   implicit def SymbolToModel(x:Symbol) = Sym(x)

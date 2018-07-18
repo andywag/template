@@ -12,6 +12,9 @@ trait MFunction extends Model{
   val output:MType
   val args:List[Var]
   def body:List[Model]
+
+  def argList = args.map(x => MVar.VarDec(x,eol=false))
+
 }
 
 object MFunction {
