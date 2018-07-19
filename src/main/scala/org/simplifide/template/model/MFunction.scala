@@ -1,7 +1,7 @@
 package org.simplifide.template.model
 
 import org.simplifide.template.Container
-import org.simplifide.template.model.MVar.{MType, Var}
+import org.simplifide.template.model.MVar.{Var}
 import shapeless.{HList, LabelledGeneric}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.record.Keys

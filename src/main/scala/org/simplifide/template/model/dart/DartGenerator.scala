@@ -7,8 +7,10 @@ import org.simplifide.template.model._
 import org.simplifide.template.{Template, TemplateGenerator}
 import Model._
 import MVar._
+import MType._
 import org.simplifide.dart.binding.MClassProto
 import org.simplifide.template.model.MFunction.{Call, Lambda, SFunction}
+import org.simplifide.template.model.MType.{Generic, NoType, SType, TypeAnd}
 import org.simplifide.template.model.ModelGenerator.create
 import org.simplifide.template.model.cpp.CppModel.CLASS
 import org.simplifide.template.model.html.HtmlModel.HtmlTag
@@ -47,12 +49,13 @@ object DartGenerator {
       case TypeAnd(x,y) => {
         x ~ SP ~ y
       }
+      case x:BaseTypes => x.name
       case NoType    => ""
       case SType(x)  => x
       case $auto   => "var"
       case $final  => "final"
-      case Generic(outer,inner) => {
-        create(outer) ~ "<" ~ commaSep(inner.map(create(_))) ~ ">"
+      case x:Generic => {
+        create(x.o) ~ "<" ~ commaSep(x.i.map(create(_))) ~ ">"
       }
 
       // Variable Section

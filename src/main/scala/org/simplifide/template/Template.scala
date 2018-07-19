@@ -48,11 +48,12 @@ object Template   {
 
   def qu(condition:Boolean, tr:Template, fa:Template) = new Question(condition,tr, fa)
 
-  def curlyIndent(x:Template*) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
-  def curlyIndent(x:List[Template]) = "{" ~ NL ~ x.map(y => indent(y)) ~ NL ~ "}"
+
+  def curlyIndent(x:List[Template]) = "{" ~ NL ~ indent(x) ~ NL ~ "}"
+  def curlyIndent(x:Template*):Template = curlyIndent(x.toList)
 
 
-  def parenIndentNL(x:List[Template]) = "(" ~ NL ~  x.map(y => indent(y)) ~ ")"
+  def parenIndentNL(x:List[Template]) = "(" ~ NL ~  indent(x) ~ NL ~ ")"
 
 
   def L(templates:List[Template]) = new ListTemplate(templates)

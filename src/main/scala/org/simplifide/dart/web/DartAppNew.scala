@@ -1,6 +1,7 @@
 package org.simplifide.dart.web
 
 import org.simplifide.dart.web.Routes.RoutePath
+import org.simplifide.template.model.MType.$final
 import org.simplifide.template.model.Model
 import org.simplifide.template.model.Model.MClass
 import org.simplifide.template.model.css.CssModel.{CssFile, CssInline}

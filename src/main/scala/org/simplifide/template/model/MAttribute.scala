@@ -1,7 +1,6 @@
 package org.simplifide.template.model
 
 import org.simplifide.template.Container
-import org.simplifide.template.model.MVar.MType
 
 trait MAttribute extends Model {
   val name:Model

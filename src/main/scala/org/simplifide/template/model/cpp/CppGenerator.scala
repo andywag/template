@@ -5,13 +5,14 @@ import org.simplifide.template.Template._
 import org.simplifide.template.model.dart.DartModel.DartImport
 import Template._
 import CppModel._
-import org.simplifide.template.model.MVar.{SType, VarDec}
+import org.simplifide.template.model.MVar.VarDec
 import org.simplifide.template.model.Model._
 import org.simplifide.template.model.dart.DartGenerator.IMPORT
 import org.simplifide.template.model.{MFunction, MVar, Model, ModelGenerator}
 import org.simplifide.template.model.Model.{Import, MClass, Str}
-import MVar.$auto
 
+import org.simplifide.template.model.MType.SType
+import org.simplifide.template.model.MType._
 
 object CppGenerator {
 

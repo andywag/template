@@ -4,6 +4,7 @@ import org.simplifide.template.{Container, FileModel}
 import org.simplifide.template.FileModel.{GCopy, GDir, GFile}
 import org.simplifide.template.model.MAttribute.MAttr
 import org.simplifide.template.model.MFunction.MFunc
+import org.simplifide.template.model.MType.{$final, SType}
 import org.simplifide.template.model.Model
 import org.simplifide.template.model.Model.{$import, Comment, Quotes}
 import org.simplifide.template.model.dart.DartProject.{DartMain, Dependency}
@@ -42,15 +43,6 @@ object DartProject {
 
   case class Dependency(name: String, version: String)
 
-
-  /*
-  import 'package:angular/angular.dart';
-  import 'package:first_dart/app_component.template.dart' as ng;
-
-  void main() {
-    runApp(ng.AppComponentNgFactory);
-  }
-   */
   import org.simplifide.template.model.MVar._
   import org.simplifide.template.model.Model._
 

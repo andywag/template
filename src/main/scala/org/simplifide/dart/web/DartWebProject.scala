@@ -50,3 +50,22 @@ trait DartWebProject  {
     )
   }
 }
+
+object DartWebProject {
+  val defaultDependencies = List(
+    Dependency("angular", "^5.0.0-alpha+15"),
+    Dependency("angular_forms", "^2.0.0-alpha"),
+    Dependency("angular_router", "^2.0.0-alpha"),
+    Dependency("http", "^0.11.0"),
+    Dependency("stream_transform", "^0.0.6")
+  )
+  val defaultDevDependencies = List(
+    Dependency("angular_test",        "^2.0.0-alpha"),
+    Dependency("build_runner",        "^0.8.10"),
+    Dependency("build_test",          "^0.10.2"),
+    Dependency("build_web_compilers", "^0.4.0"),
+    Dependency("mockito",             "^3.0.0-beta+1"),
+    Dependency("pageloader",          "^3.0.0-alpha"),
+    Dependency("test",                "^1.0.0")
+  )
+}

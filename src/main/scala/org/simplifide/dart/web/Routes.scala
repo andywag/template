@@ -2,10 +2,11 @@ package org.simplifide.dart.web
 
 import org.simplifide.template.Container
 import org.simplifide.template.model.MAttribute.MAttr
-import org.simplifide.template.model.MFunction.{SFunction}
+import org.simplifide.template.model.MFunction.SFunction
 import org.simplifide.template.model.{MAttribute, MFunction, Model}
 import org.simplifide.template.model.dart.DartParser
 import org.simplifide.template.model.MFunction._
+import org.simplifide.template.model.MType.$final
 import org.simplifide.template.model.Model._
 import org.simplifide.template.model.MVar._
 import shapeless.LabelledGeneric

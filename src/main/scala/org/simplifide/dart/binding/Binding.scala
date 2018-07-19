@@ -1,6 +1,6 @@
 package org.simplifide.dart.binding
 
-import org.simplifide.template.model.{MFunction, MVar}
+import org.simplifide.template.model.{MFunction, MType, MVar}
 import shapeless.{HList, LabelledGeneric}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.record.Keys
@@ -16,49 +16,45 @@ object Binding {
   val B_INT    = "Int"
 
   def opt(x:String) = s"Option[$x]"
-
   def rq(input:String) = input.replace(""""""","")
 
   import Json._
 
-  def getId(json:Json) = {
-    val down = json.hcursor.downField("id").focus
-    down
-  }
+  def getId(json:Json) = json.hcursor.downField("id").focus.map(x => rq(x.toString()))
+  def idOrBasic(json:Json):String = getId(json).getOrElse(json).toString()
 
-  def idOrBasic(json:Json):String = {
-    getId(json).getOrElse(json).toString()
+  /* Get the type from the json document -
+  *  Either use the string as a type name or case class should contain "id"
+  * */
+  def getJsonType(json:Json) = {
+    val base = rq(idOrBasic(json))
+    MType.decodeType(base)
   }
 
   def createField(json:Json,field:String) =   {
+    // Get the type for the field handles lists and simple fields
     def getType(typeJson:Json) = {
       val array = typeJson.asArray
       array.map(x => {
-        val id = getId(x(0))
-        MVar.Generic(MVar.SType("List"),List(MVar.SType(rq(id.get.toString()))))
+        MType.TList(getJsonType(json))
       }).getOrElse(
-        MVar.SType(rq(idOrBasic(typeJson)))
+        getJsonType(typeJson)
       )
     }
     val down = json.hcursor.downField(field).focus
-    println(s"Field : $field : $down")
-
-    MVar.Var(field,getType(down.get))
-
+    val newType = getType(down.get)
+    MVar.Var(field,newType)
   }
 
-  def walkField(json:Json,field:String):List[MClassProto] = {
-    val down = json.hcursor.downField(field).focus
-    println(s"Field : $field : $down")
+  def walkField(json:Json,field:String):List[MClassProto] =
+    walk(json.hcursor.downField(field).focus.get)
 
-    walk(down.get)
-  }
 
 
 
   private def walk(doc: Json):List[MClassProto]= {
-    val array = doc.asArray
-    val arrayClasses = array.map(x => x.flatMap(y => walk(y)))
+
+    val arrayClasses = doc.asArray.map(x => x.flatMap(y => walk(y)))
     val arrayFilter = arrayClasses.getOrElse(Vector()).toList
 
 
@@ -70,18 +66,14 @@ object Binding {
     val id = getId(doc)
 
     id.map(x => {
-      println(s"ID $x")
       val fields = other.map(createField(doc, _))
-      val cla = MClassProto.MClassProtoImpl(rq(id.get.toString()), fields.toList, List())
-      val ret = cla :: classes
-      ret
+      val cla = MClassProto.MClassProtoImpl(x, fields.toList, List())
+      cla :: classes
     }).getOrElse(classes)
   }
 
   def createClasses[T](input:T)(implicit encoder:Encoder[T]) = {
-    val json = input.asJson
-    val result = walk(json)
-    result
+    walk(input.asJson)
   }
 
   sealed trait Bindings
@@ -90,10 +82,6 @@ object Binding {
   case class Person(x:String, d:Option[String], id:String = "Person")
   case class Result(x:String, y:Person, id:String = "Result") extends Bindings
   case class Event(name:String, event:String, results:List[Result], id:String="Event") extends Bindings
-
-
-
-
 
 
   def main(args: Array[String]): Unit = {
@@ -108,4 +96,6 @@ object Binding {
     val decodedFoo = decode[Event](json.noSpaces)
     println(decodedFoo)
   }
+
+
 }

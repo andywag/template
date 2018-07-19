@@ -22,9 +22,8 @@ object YamlGenerator {
 
       case YamlModel.KeyPair(x,y) => x ~ " : " ~y ~ NL
       case YamlModel.KeyList(x,y) => {
-        x ~ " : " ~ NL ~ y.map(z => indent(create(z)))
+        x ~ " : " ~ NL ~ indent(y.map(z => create(z)))
       }
-
       case Model.Comment(x)          => "#" ~ x ~ NL
     }
   }
