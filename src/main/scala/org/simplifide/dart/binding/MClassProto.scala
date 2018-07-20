@@ -17,20 +17,17 @@ trait MClassProto extends Model {
     vars.map(x => VarDec(x,None))
   }
 
+  // FIXME : Should generalize imports rather than the assumption it is a lower case import of the class name
   def imports = {
-
-    //types.map(x => Model.Import(s"${x.toLowerCase}.dart"))
-    val typs = types
-    List()
+    def typeName(typ:MType):Option[String] = {
+      typ match {
+        case SType(x) => Some(x.toLowerCase)
+        case _ => None
+      }
+    }
+    types.flatMap(typeName(_)).map(x => Model.Import(s"${x}.dart") )
   }
 
-  /*
-  def types = {
-    val typs = vars.map(x => x.typ)
-    val allTypes = typs.flatMap(x => x.user_types_used)
-    allTypes
-  }
-*/
 
   def types = {
     def decode(typ:MType):List[MType] = {
@@ -78,14 +75,27 @@ object MClassProto {
     val v = MType.TMap(TString,TDynamic) ~ "value"
     val args = List(v.v)
 
-    val cargs = cla.vars.map(x => MapIndex("value",x.name))
+    def createField(v:MVar.Var, index:Model):Model = {
+      v.typ match {
+        case SType(x) => s"${x}.fromJson($index)"
+        case _         => index
+      }
+    }
+
+    val cargs = cla.vars.map(x => createField(x,MapIndex("value",x.name)))
     -->(Model.Return(MFunction.Call(s"${cla.name}",cargs)))
   }
 
   class To(cla:MClassProto) extends MFunction.MFunc(s"toJson",TSMap) {
     val args = List()
+    def createFieldTo(v:MVar.Var):String = {
+      v.typ match {
+        case SType(x) => s"${v.name.string}.toJson()"
+        case _ => v.name.string
+      }
+    }
 
-    val cargs = cla.vars.map(x => Model.ModelTuple(x.name,x.name))
+    val cargs = cla.vars.map(x => Model.ModelTuple(x.name,createFieldTo(x)))
     val dict  = Model.Dictionary(cargs)
     -->(Model.Return(dict))
   }

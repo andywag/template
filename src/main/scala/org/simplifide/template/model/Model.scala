@@ -1,7 +1,6 @@
 package org.simplifide.template.model
 
 import org.simplifide.template.Container
-import org.simplifide.template.model.MVar.SType
 import org.simplifide.template.model.Model.ModelTuple
 import shapeless.{:+:, CNil}
 
@@ -10,6 +9,14 @@ trait Model {
     val ret = container.-->(this)
   }
   def ~>(x:Model) = ModelTuple(this,x)
+
+  def string = {
+    this match {
+      case Model.Str(x) => x
+      case Model.Sym(x) => x.name
+      case _ => this.toString
+    }
+  }
 
 }
 
