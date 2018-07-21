@@ -43,6 +43,10 @@ object Model {
   case class Comment(x:Model) extends Model
   case class ModelTuple(x:(Model,Model)) extends Model
 
+  case class Wait(x:Model) extends Model
+  case class As(x:Model, r:Model) extends Model
+
+
   case class Return(x:Model) extends Model
 
   implicit def StringToModel(x:String) = Str(x)

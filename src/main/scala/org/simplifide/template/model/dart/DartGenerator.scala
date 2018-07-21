@@ -9,7 +9,7 @@ import Model._
 import MVar._
 import MType._
 import org.simplifide.dart.binding.MClassProto
-import org.simplifide.template.model.MFunction.{Call, Lambda, SFunction}
+import org.simplifide.template.model.MFunction.{AnonLambda, Call, Lambda, SFunction}
 import org.simplifide.template.model.MType.{Generic, NoType, SType, TypeAnd}
 import org.simplifide.template.model.ModelGenerator.create
 import org.simplifide.template.model.cpp.CppModel.CLASS
@@ -54,23 +54,38 @@ object DartGenerator {
       case SType(x)  => x
       case $auto   => "var"
       case $final  => "final"
+      case $static  => "static"
+
+      case DotSelect(l,r) => l ~ "."  ~ r
+      case BrackSelect(l,r) => l ~ "[" ~ singlequotes(r) ~ "]"
+
       case x:Generic => {
         create(x.o) ~ "<" ~ commaSep(x.i.map(create(_))) ~ ">"
       }
+
+      case Wait(x) => "await" ~ SP ~create(x)
+      case As(x,y)   =>  x ~ " as " ~ y
+
+      case x:MTryCatch.Try => "try" ~ SP ~ curlyIndent(x.items.map(create(_)))
+      case x:MTryCatch.Catch => "catch" ~ paren(x.e) ~ curlyIndent(x.items.map(create(_)))
 
       // Variable Section
       case VarDec(v,x,true)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y) ~ SEMI ~ NL
       case VarDec(v,x,false)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y)
 
       case Var(name,_) => name
+
+
       case MapIndex(o,i) => create(o) ~ "[" ~ singlequotes(i) ~ "]"
       // Function Section
       case x:MFunction => {
-        x.output ~ SP ~ x.name ~ parenComma(x.argList.map(y => create(y))) ~SP~ curlyIndent(x.body.map(y=>create(y)))
+        val post = x.postFix.map(SP ~ _ ~SP).getOrElse(SP)
+        x.output ~ SP ~ x.name ~ parenComma(x.argList.map(y => create(y))) ~post~ curlyIndent(x.body.map(y=>create(y)))
       }
       case x:Lambda => { //   RoutePath get heroes => paths.heroes;
         x.typ ~ SP ~ x.name ~ SP ~ x.input ~ " => " ~ x.func ~ SEMI ~ NL
       }
+      case AnonLambda(x,y) => paren(create(x)) ~ " => " ~ y
       case Call(name,args) => name ~ parenComma(args.map(y => create(y)))
       case ModelTuple(x)   => x._1 ~ " : " ~ x._2
 

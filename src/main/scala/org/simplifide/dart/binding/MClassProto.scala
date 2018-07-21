@@ -1,7 +1,9 @@
 package org.simplifide.dart.binding
 
+import org.simplifide.dart.binding.MClassProto.{From, To}
 import org.simplifide.template
 import org.simplifide.template.model
+import org.simplifide.template.model.MFunction.Factory
 import org.simplifide.template.model.MType._
 import org.simplifide.template.model.MVar.VarDec
 import org.simplifide.template.model.Model.{DotPrefix, Line, MClass, MapIndex, SemiEnd, Str}
@@ -11,6 +13,12 @@ trait MClassProto extends Model {
   val name:String
   val vars:List[MVar.Var]
   val fields:List[Model]
+
+  // FIXME : This isn't correct
+  def typ = SType(name)
+
+  val fromFunction =  new From(this)
+  val toFunction   =  new To(this)
 
   def declarations = {
     val a = types
@@ -71,7 +79,9 @@ object MClassProto {
   }
 
 
-  class From(cla:MClassProto) extends MFunction.MFunc(s"${cla.name}.fromJson",TFactory) {
+  class From(cla:MClassProto) extends MFunction.MFunc(s"${cla.name}.fromJson",TFactory) with Factory{
+
+    val base = cla.name
     val v = MType.TMap(TString,TDynamic) ~ "value"
     val args = List(v.v)
 

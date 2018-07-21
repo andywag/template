@@ -46,13 +46,13 @@ object Binding {
     MVar.Var(field,newType)
   }
 
-  def walkField(json:Json,field:String):List[MClassProto] =
+  def walkField(json:Json,field:String):List[(String,MClassProto)] =
     walk(json.hcursor.downField(field).focus.get)
 
 
 
 
-  private def walk(doc: Json):List[MClassProto]= {
+  private def walk(doc: Json):List[(String,MClassProto)]= {
 
     val arrayClasses = doc.asArray.map(x => x.flatMap(y => walk(y)))
     val arrayFilter = arrayClasses.getOrElse(Vector()).toList
@@ -67,13 +67,17 @@ object Binding {
 
     id.map(x => {
       val fields = other.map(createField(doc, _))
-      val cla = MClassProto.MClassProtoImpl(x, fields.toList, List())
+      val cla = (x,MClassProto.MClassProtoImpl(x, fields.toList, List()))
       cla :: classes
     }).getOrElse(classes)
   }
 
   def createClasses[T](input:T)(implicit encoder:Encoder[T]) = {
-    walk(input.asJson)
+    walk(input.asJson).map(x => x._2)
+  }
+
+  def createClassMap[T](input:T)(implicit encoder:Encoder[T]) = {
+    walk(input.asJson).toMap
   }
 
   sealed trait Bindings

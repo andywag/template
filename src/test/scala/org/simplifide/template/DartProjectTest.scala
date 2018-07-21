@@ -4,9 +4,10 @@ import java.io.File
 import java.nio.file.Files
 
 import org.scalatest.FlatSpec
-import org.simplifide.dart.binding.Binding
+import org.simplifide.dart.binding.{Binding, ModelService}
 import org.simplifide.dart.binding.Binding._
 import org.simplifide.dart.binding.DataModel.DataModelImpl
+import org.simplifide.dart.binding.ModelService.ModelServiceI
 import org.simplifide.dart.web.Routes.RoutePath
 import org.simplifide.dart.web.{DartCommands, DartComponent, DartWebProject, DartWebStyles}
 import org.simplifide.template.model.Model
@@ -32,6 +33,7 @@ object DartProjectExample extends DartWebProject {
   )
 
   val models = ProjectModel.models
+  val services = List(ModelService.all(ProjectModel.models.get(ProjectModel.event.id).get.cla,"event"))
 
 }
 
@@ -46,7 +48,8 @@ object ProjectModel {
   val result = Result(B_STRING,person)
   val event = Event(B_STRING,B_STRING,List(result))
 
-  val models = Binding.createClasses(event).map(x => DataModelImpl(x))
+  //val models = Binding.createClassMap(event).map(x => (x,DataModelImpl(x))
+  val models = Binding.createClassMap(event).map(x => (x._1,DataModelImpl(x._2))).toMap
 
 }
 object TestComponent1 extends DartComponent {

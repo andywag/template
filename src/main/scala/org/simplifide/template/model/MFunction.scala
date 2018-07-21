@@ -1,11 +1,12 @@
 package org.simplifide.template.model
 
 import org.simplifide.template.Container
-import org.simplifide.template.model.MVar.{Var}
+import org.simplifide.template.model.MVar.Var
 import shapeless.{HList, LabelledGeneric}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.record.Keys
 import Model._
+import org.simplifide.template.model.MFunction.Call
 
 trait MFunction extends Model{
   val name:Model
@@ -13,17 +14,34 @@ trait MFunction extends Model{
   val args:List[Var]
   def body:List[Model]
 
+  val postFix:Option[Model] = None
+
   def argList = args.map(x => MVar.VarDec(x,eol=false))
+
+  def apply(models:List[Model]) = {
+    this match {
+      /*case x:MFunction.Factory => {
+        Call(s"${x.base}.${name.string}",models)
+      }*/
+      case _         =>  Call(name,models)
+
+    }
+  }
 
 }
 
 object MFunction {
 
+  trait Factory {
+    val base:String
+  }
+
   abstract case class MFunc(name:Model, output:MType) extends Container[Model] with MFunction {
     def body = items.toList
   }
-  case class Call(name:Model, args:List[Model]) extends Model
+  case class Call(name:Model, args:List[Model]) extends MVar
   case class Lambda(name:String, typ:MType, input:Model, func:Model) extends Model
+  case class AnonLambda(input:Model, operation:Model) extends Model
 
 
 

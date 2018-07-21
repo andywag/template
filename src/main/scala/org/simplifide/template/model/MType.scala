@@ -41,10 +41,13 @@ object MType {
   case object TBoolean extends BaseTypes("Boolean")
   case object TDynamic extends BaseTypes("dynamic")
   case object TFactory extends BaseTypes("factory")
+
   object TSList extends BaseTypes("List")
   object TSMap extends BaseTypes("Map")
+  object TSFuture extends BaseTypes("Future")
 
   case class SType(name:String) extends MType
+
 
   def decodeType(typ:String) = {
     typ match {
@@ -62,7 +65,7 @@ object MType {
 
   case class TList(base:MType) extends Generic(TSList,List(base))
   case class TMap(key:MType, value:MType) extends Generic(TSMap,List(key,value))
-
+  case class TFuture(typ:MType) extends Generic(TSFuture,List(typ))
 
   case object NoType extends MType
   case class TypeAnd(r:MType,l:MType) extends MType
@@ -73,6 +76,7 @@ object MType {
   }
   case object $auto extends TypeId
   case object $final extends TypeId
+  case object $static extends TypeId
 
   /** Simple Type */
   def T(x:String) = SType(x)

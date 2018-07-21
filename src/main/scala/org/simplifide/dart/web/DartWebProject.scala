@@ -1,6 +1,6 @@
 package org.simplifide.dart.web
 
-import org.simplifide.dart.binding.DataModel
+import org.simplifide.dart.binding.{DataModel, ModelService}
 import org.simplifide.dart.web.Routes.RoutePath
 import org.simplifide.template.FileModel
 import org.simplifide.template.FileModel.{GCopy, GDir, GFile, GList}
@@ -17,7 +17,9 @@ trait DartWebProject  {
   val dependencies:List[Dependency]
   val devDependencies:List[Dependency]
   val routes:List[RoutePath]
-  val models:List[DataModel]
+
+  val models:Map[String,DataModel]
+  val services:List[ModelService]
 
   private lazy val componentSources = components.flatMap(x => x.createFiles)
 
@@ -32,11 +34,12 @@ trait DartWebProject  {
     GDir(name) (
       GDir("lib") (
         GDir("src",
-          GDir("models",models.map(x => x.createFile)) ::
+          GDir("models",models.map(x=>x._2).map(x => x.createFile).toList) ::
           routeFile.createFile ::
           routePathsFile.createFile ::
           componentSources :::
           sources ),
+          GDir("services", services.map(x => x.file)),
         GList(DartAppNew(routes).createFiles)
       ),
       GDir("test"),
