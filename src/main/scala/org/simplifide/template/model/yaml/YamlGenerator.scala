@@ -6,7 +6,7 @@ import org.simplifide.template.model.cpp.CppGenerator.create
 import org.simplifide.template.model.{MVar, Model, ModelGenerator}
 import org.simplifide.template.{Template, TemplateGenerator}
 import Model._
-import org.simplifide.template.model.MVar.{SType, VarDec}
+import org.simplifide.template.model.MVar.{VarDec}
 
 object YamlGenerator {
   val IMPORT = "import "

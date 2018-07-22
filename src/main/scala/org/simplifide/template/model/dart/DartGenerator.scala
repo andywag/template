@@ -8,7 +8,6 @@ import org.simplifide.template.{Template, TemplateGenerator}
 import Model._
 import MVar._
 import MType._
-import org.simplifide.dart.binding.MClassProto
 import org.simplifide.template.model.MFunction.{AnonLambda, Call, Lambda, SFunction}
 import org.simplifide.template.model.MType.{Generic, NoType, SType, TypeAnd}
 import org.simplifide.template.model.ModelGenerator.create
@@ -94,7 +93,7 @@ object DartGenerator {
       }
 
       case x:MClass         => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
-      case x:MClassProto    => create(x.create)
+      //case x:MClassProto    => create(x.create)
       case Dictionary(x)    => {
         val tuples = x.map(y => (singlequotes(y.x._1),y.x._2))
         "{" ~ commaSep(tuples.map(x => x._1 ~ " : " ~ x._2)) ~ "}"
