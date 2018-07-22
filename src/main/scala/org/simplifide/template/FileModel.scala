@@ -1,10 +1,12 @@
 package org.simplifide.template
 
-import java.io.File
+import java.io.{File, FileOutputStream}
 import java.nio.file.{Files, Path}
 
 import org.simplifide.template.model.Model
 import org.simplifide.utils.Utils
+
+import scala.io.Source
 
 sealed trait FileModel {}
 
@@ -12,7 +14,7 @@ object FileModel {
 
 
 
-
+  case class GResource(location:String, source:String) extends FileModel
   case class GCopy(location:String, source:String) extends FileModel
   case class GFile(location:String,contents:String) extends FileModel
   case class GDir(location:String,children:List[FileModel] = List()) extends FileModel
@@ -41,6 +43,13 @@ object FileModel {
         System.out.println(s"Moving $srcPath to $dstPath")
         if (Files.exists(dstPath)) Files.delete(dstPath)
         Files.copy(srcPath,dstPath)
+      }
+      case GResource(x,y) => {
+        val stream = ClassLoader.getSystemResourceAsStream(y)
+        val path = Source.fromResource(y)
+        val dstPath = new File(base,x).toPath
+        if (Files.exists(dstPath)) Files.delete(dstPath)
+        Files.copy(stream,dstPath)
       }
     }
   }
