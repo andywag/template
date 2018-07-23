@@ -19,4 +19,18 @@ object Utils {
     }
   }
 
+  def camelToUnderscoresInternal(name: String) = "[A-Z\\d]".r.replaceAllIn(name, {
+    m => "_" + m.group(0).toLowerCase()
+  })
+
+  def camelToUnderscores(name1: String) = {
+    val name = camelToUnderscoresInternal(name1)
+    if (name.indexOf("_") == 0) name.substring(1) else name
+  }
+
+
+  def underscoreToCamel(name: String) = "_([a-z\\d])".r.replaceAllIn(name, {m =>
+    m.group(1).toUpperCase()
+  })
+
 }

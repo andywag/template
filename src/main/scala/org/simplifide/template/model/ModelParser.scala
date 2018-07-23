@@ -11,6 +11,10 @@ trait ModelParser {
     -->(Model.Line)
   }
 
+  def importClass(dart:MClassFile) = {
+
+  }
+
   def imp(input:Model) = {
     -->(Model.Import(input))
   }
