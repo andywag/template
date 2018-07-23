@@ -11,10 +11,12 @@ import org.simplifide.template.model.yaml.{YamlModel, YamlParser}
 /**
   * Class used to create the pubspec.yaml file
   */
+
+
 case class PubSpec(description:Description,
                    dependencies:List[Dependency],
                    devDependencies:List[Dependency],
-                   version:String=">=2.0.0-dev.64.1 <2.0.0") extends Container[Model] with YamlParser {
+                   version:String=">=2.0.0-dev.64.0 <3.0.0") extends Container[Model] with YamlParser {
 
   'name ->> description.name
   'description ->> description.description

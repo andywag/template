@@ -17,7 +17,11 @@ trait DartParser extends ModelParser {
   // Imports
   def IMPORT_DART_ASYNC        = imp("dart:async")
   def IMPORT_DART_CONVERT     = imp("dart:convert")
+  def IMPORT_DART_MATH     = imp("dart:math")
+
   def IMPORT_HTTP        = imp(Package("http","http.dart"))
+  def IMPORT_PACKAGE_TESTING        = imp(Package("http","testing.dart"))
+
   def IMPORT_ANGULAR        = imp(Package("angular","angular.dart"))
   def IMPORT_ANGULAR_ROUTER = imp(Package("angular_router","angular_router.dart"))
   def IMPORT_SELF           = -->(Import("main.template.dart",Some("self")))
