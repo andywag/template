@@ -73,7 +73,9 @@ object Model {
 
 
   // Class Section
-  class MClass(val name:Model) extends Container[Model] with Model
+  class MClass(val name:Model) extends Container[Model] with Model {
+    val parents:List[MClass] = List()
+  }
 
 
 
