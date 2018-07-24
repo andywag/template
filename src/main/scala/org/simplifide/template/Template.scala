@@ -54,6 +54,7 @@ object Template   {
 
 
   def parenIndentNL(x:List[Template]) = "(" ~ NL ~  indent(x) ~ NL ~ ")"
+  def parenBrackIndentNL(x:List[Template]) = "([" ~ NL ~  indent(x) ~ "])"
 
 
   def L(templates:List[Template]) = new ListTemplate(templates)

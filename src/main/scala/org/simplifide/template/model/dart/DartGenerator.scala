@@ -34,6 +34,7 @@ object DartGenerator {
       case SemiEnd(l) => create(l) ~ ";" ~ NL
       // Core
       case x:DartConstants.Directive => x.name
+      case Model.MArray(x) => "[" ~ commaSep(x.map(create(_))) ~ "]"
 
       case Import(x,None,_) => IMPORT ~ singlequotes(x) ~ ";" ~NL
       case Import(x,Some(y),_) => IMPORT ~ singlequotes(x) ~ " as " ~ y ~ ";" ~NL

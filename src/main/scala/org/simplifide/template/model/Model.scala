@@ -24,6 +24,7 @@ object Model {
 
   def Line = Str("\n")
 
+  case object Emtpy extends Model
   case object Semi extends Model
   case class Str(name:String)    extends Model
   case class Sym(name:Symbol)    extends Model
@@ -42,6 +43,8 @@ object Model {
 
   case class Comment(x:Model) extends Model
   case class ModelTuple(x:(Model,Model)) extends Model
+  case class MArray(x:List[Model]) extends Model
+  object MArray{def apply(x:Seq[Model]):MArray= new MArray(x.toList)}
 
   case class Wait(x:Model) extends Model
   case class As(x:Model, r:Model) extends Model

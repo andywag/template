@@ -2,7 +2,7 @@ package org.simplifide.template.model
 
 import org.simplifide.template.Container
 import org.simplifide.template.model.MVar.VarDec
-import org.simplifide.template.model.Model.Semi
+import org.simplifide.template.model.Model.{Import, Semi}
 
 trait ModelParser {
   self:Container[Model] =>
@@ -11,8 +11,20 @@ trait ModelParser {
     -->(Model.Line)
   }
 
-  def importClass(dart:MClassFile) = {
+  def importClass(dart:MClassFile, local:Option[MClassFile]) = {
+    def relative(dest:String,source:String) = {
+      val s = source.split("/")
+      val d = dest.split("/")
 
+      val comb = d.zipWithIndex.map(x => {
+        if (x._2 >= s.size) Some(x._1)
+        else if (x._1 == s(x._2)) Some("..")
+        else Some(x._1)
+      }).flatten
+      comb.mkString("/") + "/"
+    }
+    val res = local.map(x => relative(dart.classPath,x.classPath)).getOrElse(dart.classPath)
+    -->(Model.Import(res+ dart.fileName))
   }
 
   def imp(input:Model) = {
