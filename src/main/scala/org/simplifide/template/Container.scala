@@ -11,8 +11,9 @@ trait Container[T] {
 
   def -->[S <: T](x:S):S     = {items.append(x); x}
 
-  def contents(implicit create:(T)=>Template) = {
-    val templates = items.toList.map(x => create(x))
+  def contents(extra:List[T]=List())(implicit create:(T)=>Template) = {
+    val all = extra ::: items.toList
+    val templates = all.map(x => create(x))
     templates.map(x => TemplateGenerator.create(x)).mkString("")
   }
 

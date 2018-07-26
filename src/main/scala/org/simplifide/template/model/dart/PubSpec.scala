@@ -38,7 +38,7 @@ case class PubSpec(description:Description,
   }
 
   def create = {
-    val contents = this.contents(YamlModel.cWriter)
+    val contents = this.contents()(YamlModel.cWriter)
     new GFile("pubspec.yaml", contents)
   }
 }

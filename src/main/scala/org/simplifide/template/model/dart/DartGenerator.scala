@@ -1,6 +1,6 @@
 package org.simplifide.template.model.dart
 
-import org.simplifide.template.model.dart.DartModel.{DartImport, Package}
+import org.simplifide.template.model.dart.DartModel.{DartBuiltIn, DartImport, DartPackage}
 import org.simplifide.template.Template._
 import org.simplifide.template.model.cpp.CppGenerator.create
 import org.simplifide.template.model._
@@ -38,7 +38,8 @@ object DartGenerator {
 
       case Import(x,None,_) => IMPORT ~ singlequotes(x) ~ ";" ~NL
       case Import(x,Some(y),_) => IMPORT ~ singlequotes(x) ~ " as " ~ y ~ ";" ~NL
-      case Package(p,x)   => "package" ~ COLON ~ p ~ "/" ~ x
+      case DartPackage(p,x)   => "package" ~ COLON ~ p ~ "/" ~ x
+      case DartBuiltIn(x) => "dart:" ~ x
       case x:MAttribute   => {
         val result = if (x.body.size > 0) "@" ~ x.name ~ parenIndentNL(x.body.map(y => create(y) ~ "," ~ NL)) ~NL
         else  "@" ~ x.name ~ "()" ~NL
@@ -51,7 +52,10 @@ object DartGenerator {
       }
       case x:BaseTypes => x.name
       case NoType    => ""
-      case SType(x)  => x
+      case SType(x)        => x
+      case x:DefinedType   => x.name
+      case x:MClassType   => x.cla.name
+
       case $auto   => "var"
       case $final  => "final"
       case $static  => "static"
@@ -70,18 +74,26 @@ object DartGenerator {
       case x:MTryCatch.Catch => "catch" ~ paren(x.e) ~ curlyIndent(x.items.map(create(_)))
 
       // Variable Section
+      // FIXME : Need to Fix the Default Section
       case VarDec(v,x,true)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y) ~ SEMI ~ NL
       case VarDec(v,x,false)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y)
 
-      case Var(name,_) => name
+      case Var(name,_,_) => name
 
 
       case MapIndex(o,i) => create(o) ~ "[" ~ singlequotes(i) ~ "]"
       // Function Section
-      case x:MFunction => {
-        val post = x.postFix.map(SP ~ _ ~SP).getOrElse(SP)
-        x.output ~ SP ~ x.name ~ parenComma(x.argList.map(y => create(y))) ~post~ curlyIndent(x.body.map(y=>create(y)))
+      case x:MFunction.Constructor => {
+        val s = if (x.sup.size > 0) SP ~ ":" ~ SP ~ create(MFunction.Call("super",x.sup))
+        else SP
+        x.name ~ parenComma(x.argList.map(y => create(y))) ~ s ~ curlyIndent(x.body.map(y=>create(y)))
       }
+      case x:MFunction => {
+        val post = x.postfix.map(SP ~ _ ~ SP).getOrElse(SP)
+        val pre  = x.prefix.map(SP ~ _ ~ SP ).getOrElse(SP)
+        pre ~ x.output ~ SP  ~ x.name ~ parenComma(x.argList.map(y => create(y))) ~post~ curlyIndent(x.body.map(y=>create(y)))
+      }
+
       case x:Lambda => { //   RoutePath get heroes => paths.heroes;
         x.typ ~ SP ~ x.name ~ SP ~ x.input ~ " => " ~ x.func ~ SEMI ~ NL
       }
@@ -93,7 +105,16 @@ object DartGenerator {
         x.render
       }
 
-      case x:MClass         => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
+      case x:MClass        => {
+
+        val parent = if (x.parents.size == 0) SP
+        else if (x.parents.size == 1) SP ~ "extends" ~ SP ~ create(x.parents(0).name) ~ SP
+        else SP ~ "extends" ~ SP ~ create(x.parents(0).name) ~ SP // FIXME Not Completed
+
+
+        CLASS ~ x.name ~ parent ~ curlyIndent(x.body.toList.map(create(_)))
+      }
+
       //case x:MClassProto    => create(x.create)
       case Dictionary(x)    => {
         val tuples = x.map(y => (singlequotes(y.x._1),y.x._2))

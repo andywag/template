@@ -24,7 +24,7 @@ object Model {
 
   def Line = Str("\n")
 
-  case object Emtpy extends Model
+  case object Empty extends Model
   case object Semi extends Model
   case class Str(name:String)    extends Model
   case class Sym(name:Symbol)    extends Model
@@ -75,10 +75,7 @@ object Model {
 
 
 
-  // Class Section
-  class MClass(val name:Model) extends Container[Model] with Model {
-    val parents:List[MClass] = List()
-  }
+
 
 
 

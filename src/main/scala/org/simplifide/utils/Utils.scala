@@ -19,6 +19,10 @@ object Utils {
     }
   }
 
+  def firstLetterLower(name:String) = {
+    s"${Character.toLowerCase(name(0))}${name.substring(1)}"
+  }
+
   def camelToUnderscoresInternal(name: String) = "[A-Z\\d]".r.replaceAllIn(name, {
     m => "_" + m.group(0).toLowerCase()
   })

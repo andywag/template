@@ -1,35 +1,27 @@
 package org.simplifide.template.model
 
-import org.simplifide.template.model.MType.{BaseTypes, Generic, SType, TypeAnd}
+import org.simplifide.template.model.MType._
 import org.simplifide.template.model.MVar._
-import org.simplifide.template.model.Model.Str
+import org.simplifide.template.model.Model.{Empty, Str}
+import org.simplifide.utils.Utils
 
 trait MType extends Model {
-  def ~(name:Model) = VarDec(Var(name,this))
 
-  /*def user_types_used:List[String] = {
-    def filterTypes(typ:String) = {
-      typ match {
-        case "String" => List()
-        case "Int"    => List()
-        case "List"   => List()
-        case _        => List(typ)
-      }
-    }
-
-    this match {
-      case SType(x)     => {
-        x match {
-          case Str(x) => filterTypes(x)
-          case _      => List(x.toString)
-        }
-      }
-      case x:BaseTypes => List()
-      case x:Generic => x.o.user_types_used ::: x.i.flatMap(x => x.user_types_used)
-      case TypeAnd(r,l) => r.user_types_used ::: l.user_types_used
-    }
+  val iName:String = this match {
+    case SType(x)   => x
+    case x:BaseTypes => x.name
+    case x:DefinedType => x.name
+    case x:MClassType => x.cla.name
+    case _ =>"Not Defined"
   }
-  */
+
+  def ~(name:Model) = VarDec(Var(name,this))
+  def cVar= Var(Utils.firstLetterLower(iName),this)
+  def cVar(extra:MType) = {
+    val ret = Var(Utils.firstLetterLower(iName),TypeAnd(extra,this))
+    ret
+  }
+
 }
 
 object MType {
@@ -40,13 +32,24 @@ object MType {
   case object TDouble extends BaseTypes("Double")
   case object TBoolean extends BaseTypes("Boolean")
   case object TDynamic extends BaseTypes("dynamic")
-  case object TFactory extends BaseTypes("factory")
+  case object TFactory extends BaseTypes("factory ")
+  case object TResponse extends BaseTypes("Response")
 
   object TSList extends BaseTypes("List")
   object TSMap extends BaseTypes("Map")
   object TSFuture extends BaseTypes("Future")
 
   case class SType(name:String) extends MType
+
+  class DefinedType(val name:String) extends MType {
+    def create(args:(String,Model)*) = {
+      def check(x:(String,Model)) = if (x._2 == Model.Empty) None else Some(Model.ModelTuple(x._1,x._2))
+      val a = args.map(x => check(x)).flatten.toList
+      MFunction.Call(name,a)
+    }
+  }
+
+  class MClassType(val cla:MClass) extends MType
 
 
   def decodeType(typ:String) = {

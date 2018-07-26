@@ -8,9 +8,8 @@ import CppModel._
 import org.simplifide.template.model.MVar.VarDec
 import org.simplifide.template.model.Model._
 import org.simplifide.template.model.dart.DartGenerator.IMPORT
-import org.simplifide.template.model.{MFunction, MVar, Model, ModelGenerator}
-import org.simplifide.template.model.Model.{Import, MClass, Str}
-
+import org.simplifide.template.model._
+import org.simplifide.template.model.Model.{Import, Str}
 import org.simplifide.template.model.MType.SType
 import org.simplifide.template.model.MType._
 
@@ -40,7 +39,7 @@ object CppGenerator {
 
 
       // Class Section
-      case x:MClass    => CLASS ~ x.name ~ curlyIndent(x.items.toList.map(create(_)))
+      case x:MClass    => CLASS ~ x.name ~ curlyIndent(x.body.toList.map(create(_)))
 
 
 

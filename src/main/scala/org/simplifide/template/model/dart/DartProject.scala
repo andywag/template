@@ -30,7 +30,7 @@ trait DartProject {
       GDir("web",List(
         GCopy("favicon.png","C:\\scala_projects\\first_dart\\web\\favicon.png"),
         GCopy("index.html","C:\\scala_projects\\first_dart\\web\\index.html"),
-        GFile("main.dart",DartMain.contents(DartModel.dartWriter)),
+        //GFile("main.dart",DartMain.contents(DartModel.dartWriter)),
         GCopy("styles.css","C:\\scala_projects\\first_dart\\web\\styles.css")
       )),
       PubSpec(PubSpec.Description(this.name,""),dependencies,devDependencies).create

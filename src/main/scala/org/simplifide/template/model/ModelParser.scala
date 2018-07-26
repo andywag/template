@@ -23,7 +23,8 @@ trait ModelParser {
       }).flatten
       comb.mkString("/") + "/"
     }
-    val res = local.map(x => relative(dart.classPath,x.classPath)).getOrElse(dart.classPath)
+    val res1 = local.map(x => relative(dart.classPath,x.classPath)).getOrElse(dart.classPath)
+    val res = res1.replace("src/","")
     -->(Model.Import(res+ dart.fileName))
   }
 
