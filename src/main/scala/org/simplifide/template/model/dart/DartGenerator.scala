@@ -75,8 +75,17 @@ object DartGenerator {
 
       // Variable Section
       // FIXME : Need to Fix the Default Section
-      case VarDec(v,x,true)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y) ~ SEMI ~ NL
-      case VarDec(v,x,false)    => v.typ ~ SP ~ v.name ~ x.map(y => " = " ~ y)
+      case VarDec(v,x,eol)    => {
+        def or(s:Option[Model],t:Option[Model]) = {
+          (s,t) match {
+            case (Some(_),_) => s
+            case (_,Some(_)) => t
+            case _           => None
+          }
+        }
+        if (eol) v.typ ~ SP ~ v.name ~ or(x,v.default).map(y => " = " ~ y) ~ SEMI ~ NL
+        else     v.typ ~ SP ~ v.name ~ or(x,v.default).map(y => " = " ~ y)
+      }
 
       case Var(name,_,_) => name
 
@@ -98,7 +107,8 @@ object DartGenerator {
         x.typ ~ SP ~ x.name ~ SP ~ x.input ~ " => " ~ x.func ~ SEMI ~ NL
       }
       case AnonLambda(x,y) => paren(create(x)) ~ " => " ~ y
-      case Call(name,args) => name ~ parenComma(args.map(y => create(y)))
+      case Call(name,args,eol) => name ~ parenComma(args.map(y => create(y))) ~ (if (eol) ";" ~ Model.Line else Model.Str(""))
+
       case ModelTuple(x)   => x._1 ~ " : " ~ x._2
 
       case HtmlTag(x) => {

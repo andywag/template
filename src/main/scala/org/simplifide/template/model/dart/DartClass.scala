@@ -1,23 +1,25 @@
 package org.simplifide.template.model.dart
 
-import org.simplifide.template.model.{MClass, MFunction}
+import org.simplifide.template.Container
+import org.simplifide.template.model.{MClass, MFunction, Model}
+import org.simplifide.template.model.Model.Str
 
-trait DartClass extends MClass {
+trait DartClass extends MClass  {
 
 }
 
 object DartClass {
-  case class DartClassBase(name:String) extends DartClass {
+  class DartClassBase(val name:String) extends DartClass with Container[Model] with DartParser {
 
     def body = {
       val declarations = members.map(x => x.createDec)
-      declarations
+      declarations ::: List(dartConstructor(this)) ::: items.toList
     }
   }
 
-  case class DartConstructor(cla:DartClass)  {
-    val mem = cla.members.map(x => s"x.name)
-    MFunction.Call(cla.name,)
+  def dartConstructor(cla:DartClass) =  {
+    val mem = cla.members.filter(x => x.default==None).map(x => Model.DotPrefix(s"this",x.name))
+    MFunction.Call(cla.name,mem, eol = true)
   }
 
 }

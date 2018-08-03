@@ -40,7 +40,7 @@ object MFunction {
   abstract case class MFunc(name:Model, output:MType) extends Container[Model] with MFunction {
     def body = items.toList
   }
-  case class Call(override val name:Model, args:List[Model]) extends EmptyVar
+  case class Call(override val name:Model, args:List[Model], eol:Boolean = false) extends EmptyVar
   case class Lambda(name:String, typ:MType, input:Model, func:Model) extends Model
   case class AnonLambda(input:Model, operation:Model) extends Model
 
